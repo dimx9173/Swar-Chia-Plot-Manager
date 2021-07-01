@@ -66,7 +66,7 @@ def get_plot_k_size(commands, backend):
         madmax=_get_madmax_backend_plot_k_size,
     )
 
-    return k_size_parsers.get(backend)(commands)
+    return k_size_parsers.get(backend)(commands, backend)
 
 
 def _get_chia_backend_plot_k_size(commands, backend):
