@@ -229,7 +229,7 @@ def get_running_file_prefixs(running_work, view_settings):
     for workid in running_work:
         datetime_start_str = running_work[workid].datetime_start.strftime(view_settings['datetime_format'])
         datetime_start_str = datetime_start_str.replace(' ', '-').replace(':', '-')
-        running_file_prefixs.add("plot-k" + running_work[workid].k_size + '-' + datetime_start_str)
+        running_file_prefixs.add("plot-k" + running_work[workid].k_size + '-' + datetime_start_str[:-3])
         pass
     return running_file_prefixs
 
@@ -252,7 +252,7 @@ def print_prefix(jobs, running_work, view_settings):
     for job in jobs:
         temp_file_prefixs = get_temp_file_prefixs(job=job)
         print(f'Currnet job[{job.name}] temp file prefix: {temp_file_prefixs}')
-        leak_file_prefixs = temp_file_prefixs.remove(running_file_prefixs)
+        leak_file_prefixs = temp_file_prefixs - running_file_prefixs
         print(f'Currnet job[{job.name}] Leak file prefix = {leak_file_prefixs}')
         pass
     pass
