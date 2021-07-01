@@ -1,6 +1,7 @@
 import os
 import psutil
 import json
+import re
 
 from datetime import datetime, timedelta
 
@@ -203,7 +204,6 @@ def print_view(jobs, running_work, analysis, drives, next_log_check, view_settin
     print(pretty_print_job_data(job_data))
     print(f'Manager Status: {"Running" if manager_processes else "Stopped"}')
     print()
-
     if view_settings.get('include_drive_info'):
         print(drive_data)
     if view_settings.get('include_cpu'):
@@ -220,3 +220,40 @@ def print_view(jobs, running_work, analysis, drives, next_log_check, view_settin
     if loop:
         print(f"Next log check at {next_log_check.strftime('%Y-%m-%d %H:%M:%S')}")
     print()
+    print_prefix(jobs=jobs, running_work=running_work, view_settings=view_settings)
+    print()
+
+
+def get_running_file_prefixs(running_work, view_settings):
+    running_file_prefixs = set()
+    for work in running_work:
+        datetime_start_str = work.datetime_start.strftime(view_settings['datetime_format'])
+        datetime_start_str = datetime_start_str.replace(' ', '-').replace(':', '-')
+        running_file_prefixs.add("plot-k" + work.k_size + '-' + datetime_start_str)
+        pass
+    return running_file_prefixs
+
+def get_temp_file_prefixs(job):
+    plotUnits = set() 
+    if job.temporary_directory != "" :
+        plots = os.listdir(job.temporary_director) 
+        for plot in plots:
+            x = re.search(r"\S+\-\b", plot)
+            if x != None :
+                st = x.group()
+                plotUnits.add(st[:-1])
+            pass
+        pass
+    return plotUnits
+
+def print_prefix(jobs, running_work, view_settings):
+    running_file_prefixs = get_running_file_prefixs(running_work=running_work, view_settings=view_settings)
+    print(f'Currnet running file prefix: {running_file_prefixs}')
+    for job in jobs:
+        temp_file_prefixs = get_temp_file_prefixs(job=job)
+        print(f'Currnet job[{job.name}] temp file prefix: {temp_file_prefixs}')
+        leak_file_prefixs = temp_file_prefixs.remove(running_file_prefixs)
+        print(f'Currnet job[{job.name}] Leak file prefix = {leak_file_prefixs}')
+        pass
+    pass
+
