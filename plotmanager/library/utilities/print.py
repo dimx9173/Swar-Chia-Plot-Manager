@@ -226,10 +226,10 @@ def print_view(jobs, running_work, analysis, drives, next_log_check, view_settin
 
 def get_running_file_prefixs(running_work, view_settings):
     running_file_prefixs = set()
-    for work in running_work:
-        datetime_start_str = work.datetime_start.strftime(view_settings['datetime_format'])
+    for workid in running_work:
+        datetime_start_str = running_work[workid].datetime_start.strftime(view_settings['datetime_format'])
         datetime_start_str = datetime_start_str.replace(' ', '-').replace(':', '-')
-        running_file_prefixs.add("plot-k" + work.k_size + '-' + datetime_start_str)
+        running_file_prefixs.add("plot-k" + running_work[workid].k_size + '-' + datetime_start_str)
         pass
     return running_file_prefixs
 
