@@ -1,12 +1,10 @@
 import os
 import psutil
 import json
-import re
 
 from datetime import datetime, timedelta
 
-from plotmanager.library.utilities.processes import get_manager_processes
-from plotmanager.library.utilities.jobs import get_running_file_prefixs, get_temp_file_prefixs, purge
+from plotmanager.library.utilities.processes import get_running_file_prefixs, get_temp_file_prefixs, get_manager_processes
 
 
 def _get_row_info(pid, running_work, view_settings, as_raw_values=False, backend='chia'):
