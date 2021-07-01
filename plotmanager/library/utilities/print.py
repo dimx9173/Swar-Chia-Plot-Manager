@@ -6,6 +6,7 @@ import re
 from datetime import datetime, timedelta
 
 from plotmanager.library.utilities.processes import get_manager_processes
+from plotmanager.library.utilities.jobs import get_running_file_prefixs, get_temp_file_prefixs, purge
 
 
 def _get_row_info(pid, running_work, view_settings, as_raw_values=False, backend='chia'):
@@ -220,47 +221,19 @@ def print_view(jobs, running_work, analysis, drives, next_log_check, view_settin
     if loop:
         print(f"Next log check at {next_log_check.strftime('%Y-%m-%d %H:%M:%S')}")
     print()
-    print_prefix(jobs=jobs, running_work=running_work, view_settings=view_settings)
+    monitor_leak_file_handler(jobs=jobs, running_work=running_work)
     print()
 
 
-def get_running_file_prefixs(running_work, view_settings):
-    running_file_prefixs = set()
-    for workid in running_work:
-        datetime_start_str = running_work[workid].datetime_start.strftime(view_settings['datetime_format'])
-        datetime_start_str = datetime_start_str.replace(' ', '-').replace(':', '-')
-        running_file_prefixs.add("plot-k" + running_work[workid].k_size + '-' + datetime_start_str[:-3])
-        pass
-    return running_file_prefixs
 
-def get_temp_file_prefixs(job):
-    plotUnits = set() 
-    if job.temporary_directory != "" :
-        plots = os.listdir(job.temporary_directory[0]) 
-        for plot in plots:
-            x = re.search(r"\S+\-\b", plot)
-            if x != None :
-                st = x.group()
-                plotUnits.add(st[:-1])
-            pass
-        pass
-    return plotUnits
-
-def print_prefix(jobs, running_work, view_settings):
-    running_file_prefixs = get_running_file_prefixs(running_work=running_work, view_settings=view_settings)
+def monitor_leak_file_handler(jobs, running_work):
+    running_file_prefixs = get_running_file_prefixs(running_work=running_work)
     print(f'Currnet running file prefix: {running_file_prefixs}')
     for job in jobs:
         temp_file_prefixs = get_temp_file_prefixs(job=job)
         print(f'Currnet job[{job.name}] temp file prefix: {temp_file_prefixs}')
         leak_file_prefixs = temp_file_prefixs - running_file_prefixs
         print(f'Currnet job[{job.name}] Leak file prefix = {leak_file_prefixs}')
-        for leakfiles in leak_file_prefixs:
-            purge(job.temporary_directory[0], leakfiles + "*")
-            pass
         pass
     pass
 
-def purge(dir, pattern):
-    for f in os.listdir(dir):
-        if re.search(pattern, f):
-            os.remove(os.path.join(dir, f))

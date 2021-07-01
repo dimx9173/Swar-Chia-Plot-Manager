@@ -5,7 +5,7 @@ import psutil
 from datetime import datetime, timedelta
 
 from plotmanager.library.parse.configuration import get_config_info
-from plotmanager.library.utilities.jobs import has_active_jobs_and_work, load_jobs, monitor_jobs_to_start
+from plotmanager.library.utilities.jobs import handle_leak_file, has_active_jobs_and_work, load_jobs, monitor_jobs_to_start
 from plotmanager.library.utilities.log import check_log_progress
 from plotmanager.library.utilities.processes import get_running_plots, get_system_drives
 
@@ -120,6 +120,7 @@ while has_active_jobs_and_work(jobs):
         backend=backend,
     )
 
+    handle_leak_file(jobs=jobs, running_work=running_work)
     logging.info(f'Sleeping for {manager_check_interval} seconds.')
     time.sleep(manager_check_interval)
 
