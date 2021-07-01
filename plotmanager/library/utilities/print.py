@@ -236,7 +236,7 @@ def get_running_file_prefixs(running_work, view_settings):
 def get_temp_file_prefixs(job):
     plotUnits = set() 
     if job.temporary_directory != "" :
-        plots = os.listdir(job.temporary_directory) 
+        plots = os.listdir(job.temporary_directory[0]) 
         for plot in plots:
             x = re.search(r"\S+\-\b", plot)
             if x != None :
