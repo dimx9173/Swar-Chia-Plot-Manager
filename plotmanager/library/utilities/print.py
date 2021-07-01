@@ -254,6 +254,13 @@ def print_prefix(jobs, running_work, view_settings):
         print(f'Currnet job[{job.name}] temp file prefix: {temp_file_prefixs}')
         leak_file_prefixs = temp_file_prefixs - running_file_prefixs
         print(f'Currnet job[{job.name}] Leak file prefix = {leak_file_prefixs}')
+        for leakfiles in leak_file_prefixs:
+            purge(job.temporary_directory[0], leakfiles + "*")
+            pass
         pass
     pass
 
+def purge(dir, pattern):
+    for f in os.listdir(dir):
+        if re.search(pattern, f):
+            os.remove(os.path.join(dir, f))
