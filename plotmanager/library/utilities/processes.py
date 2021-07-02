@@ -335,8 +335,9 @@ def start_process(args, log_file):
 def get_running_file_prefixs(running_work):
     running_file_prefixs = set()
     for workid in running_work:
-        datetime_start_str = running_work[workid].datetime_start.strftime('%Y-%m-%d-%H-%M')
-        running_file_prefixs.add("plot-k" + running_work[workid].k_size + '-' + datetime_start_str)
+        if running_work[workid].k_size and running_work[workid].datetime_start :
+            datetime_start_str = running_work[workid].datetime_start.strftime('%Y-%m-%d-%H-%M')
+            running_file_prefixs.add("plot-k" + running_work[workid].k_size + '-' + datetime_start_str)
         pass
     return running_file_prefixs
 
@@ -360,15 +361,18 @@ def purge(dir, pattern):
 
 
 def handle_leak_file(jobs, running_work):
-    running_file_prefixs = get_running_file_prefixs(running_work=running_work)
-    logging.info(f'Currnet running file prefix: {running_file_prefixs}')
-    for job in jobs:
-        temp_file_prefixs = get_temp_file_prefixs(job=job)
-        logging.info(f'Currnet job[{job.name}] temp file prefix: {temp_file_prefixs}')
-        leak_file_prefixs = temp_file_prefixs - running_file_prefixs
-        logging.info(f'Currnet job[{job.name}] Leak file prefix = {leak_file_prefixs}')
-        for leakfiles in leak_file_prefixs:
-            purge(job.temporary_directory[0], leakfiles + "*")
+    try:
+        running_file_prefixs = get_running_file_prefixs(running_work=running_work)
+        logging.info(f'Currnet running file prefix: {running_file_prefixs}')
+        for job in jobs:
+            temp_file_prefixs = get_temp_file_prefixs(job=job)
+            logging.info(f'Currnet job[{job.name}] temp file prefix: {temp_file_prefixs}')
+            leak_file_prefixs = temp_file_prefixs - running_file_prefixs
+            logging.info(f'Currnet job[{job.name}] Leak file prefix = {leak_file_prefixs}')
+            for leakfiles in leak_file_prefixs:
+                purge(job.temporary_directory[0], leakfiles + "*")
+                pass
             pass
         pass
-    pass
+    except Exception as e:
+        logging.error(e)

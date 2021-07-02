@@ -225,13 +225,16 @@ def print_view(jobs, running_work, analysis, drives, next_log_check, view_settin
 
 
 def monitor_leak_file_handler(jobs, running_work):
-    running_file_prefixs = get_running_file_prefixs(running_work=running_work)
-    print(f'Currnet running file prefix: {running_file_prefixs}')
-    for job in jobs:
-        temp_file_prefixs = get_temp_file_prefixs(job=job)
-        print(f'Currnet job[{job.name}] temp file prefix: {temp_file_prefixs}')
-        leak_file_prefixs = temp_file_prefixs - running_file_prefixs
-        print(f'Currnet job[{job.name}] Leak file prefix = {leak_file_prefixs}')
+    try:
+        running_file_prefixs = get_running_file_prefixs(running_work=running_work)
+        print(f'Currnet running file prefix: {running_file_prefixs}')
+        for job in jobs:
+            temp_file_prefixs = get_temp_file_prefixs(job=job)
+            print(f'Currnet job[{job.name}] temp file prefix: {temp_file_prefixs}')
+            leak_file_prefixs = temp_file_prefixs - running_file_prefixs
+            print(f'Currnet job[{job.name}] Leak file prefix = {leak_file_prefixs}')
+            pass
         pass
-    pass
+    except Exception as e:
+        print(e)
 
