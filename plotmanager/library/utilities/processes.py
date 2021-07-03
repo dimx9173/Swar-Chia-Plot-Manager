@@ -348,10 +348,10 @@ def get_temp_file_prefixs(job):
     if job.temporary_directory != "" :
         plots = os.listdir(job.temporary_directory[0]) 
         for plot in plots:
-            x = re.search(r"\S+\-\b", plot)
+            x = re.search(r"\d{4}(\-\d{2}){4}", plot)
             if x != None :
                 st = x.group()
-                plotUnits.add(st[-9:-1])
+                plotUnits.add(st)
             pass
         pass
     return plotUnits
@@ -372,7 +372,7 @@ def handle_leak_file(jobs, running_work):
             leak_file_prefixs = temp_file_prefixs - running_file_prefixs
             logging.info(f'Currnet job[{job.name}] Leak file prefix: {leak_file_prefixs}')
             for leakfiles in leak_file_prefixs:
-                purge(job.temporary_directory[0], leakfiles + "*")
+                purge(job.temporary_directory[0], "*" + leakfiles + "*")
                 pass
             pass
         pass
