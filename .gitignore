@@ -132,3 +132,5 @@ dmypy.json
 config.yaml
 *.bak
 .idea
+SWAR.sublime-project
+SWAR.sublime-workspace
