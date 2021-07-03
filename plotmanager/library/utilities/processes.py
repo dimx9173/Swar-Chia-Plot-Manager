@@ -335,9 +335,11 @@ def start_process(args, log_file):
 def get_running_file_prefixs(running_work):
     running_file_prefixs = set()
     for workid in running_work:
-        if running_work[workid].k_size and running_work[workid].datetime_start :
+        if running_work[workid].datetime_start :
             datetime_start_str = running_work[workid].datetime_start.strftime('%Y-%m-%d-%H-%M')
-            running_file_prefixs.add("plot-k" + running_work[workid].k_size + '-' + datetime_start_str)
+            running_file_prefixs.add(datetime_start_str)
+        else:
+            logging.error(f'datetime_start{running_work[workid].datetime_start}')
         pass
     return running_file_prefixs
 
@@ -349,7 +351,7 @@ def get_temp_file_prefixs(job):
             x = re.search(r"\S+\-\b", plot)
             if x != None :
                 st = x.group()
-                plotUnits.add(st[:-1])
+                plotUnits.add(st[-9:-1])
             pass
         pass
     return plotUnits
@@ -366,9 +368,9 @@ def handle_leak_file(jobs, running_work):
         logging.info(f'Currnet running file prefix: {running_file_prefixs}')
         for job in jobs:
             temp_file_prefixs = get_temp_file_prefixs(job=job)
-            logging.info(f'Currnet job[{job.name}] temp file prefix: {temp_file_prefixs}')
+            logging.info(f'Currnet job[{job.name}] Temp file prefix: {temp_file_prefixs}')
             leak_file_prefixs = temp_file_prefixs - running_file_prefixs
-            logging.info(f'Currnet job[{job.name}] Leak file prefix = {leak_file_prefixs}')
+            logging.info(f'Currnet job[{job.name}] Leak file prefix: {leak_file_prefixs}')
             for leakfiles in leak_file_prefixs:
                 purge(job.temporary_directory[0], leakfiles + "*")
                 pass
