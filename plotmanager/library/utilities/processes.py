@@ -356,10 +356,15 @@ def get_temp_file_prefixs(job):
         pass
     return plotUnits
 
-def purge(dir, pattern):
-    for f in os.listdir(dir):
+def purge(dirpath, pattern):
+    files = os.listdir(dirpath)
+    logging.info(f'Try to remove leak files from {dirpath}, total file number {len(files)}')
+    for f in files:
         if re.search(pattern, f):
-            os.remove(os.path.join(dir, f))
+            os.remove(os.path.join(dirpath, f))
+            pass
+        pass
+    pass
 
 
 def handle_leak_file(jobs, running_work):
