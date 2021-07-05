@@ -377,7 +377,7 @@ def handle_leak_file(jobs, running_work):
             leak_file_prefixs = temp_file_prefixs - running_file_prefixs
             logging.info(f'Currnet job[{job.name}] Leak file prefix: {leak_file_prefixs}')
             for leakfiles in leak_file_prefixs:
-                purge(job.temporary_directory[0], "*" + leakfiles + "*")
+                purge(job.temporary_directory[0], leakfiles)
                 pass
             pass
         pass
