@@ -81,12 +81,17 @@ def load_jobs(config_jobs):
 
         job.farmer_public_key = info.get('farmer_public_key', None)
         job.pool_public_key = info.get('pool_public_key', None)
+        job.pool_contract_address = info.get('pool_contract_address', None)
         job.max_concurrent = info['max_concurrent']
         job.max_concurrent_with_start_early = info['max_concurrent_with_start_early']
 
         if job.max_concurrent_with_start_early < job.max_concurrent:
             raise InvalidConfigurationSetting('Your "max_concurrent_with_start_early" value must be greater than or '
                                               'equal to your "max_concurrent" value.')
+        
+        if (job.pool_contract_address and job.pool_public_key) is not None:
+            raise InvalidConfigurationSetting('You cant use both "pool_contract_address" and "pool_public_key" at once '
+                                              'You can only define one per job')
 
         job.max_for_phase_1 = info['max_for_phase_1']
         job.initial_delay_minutes = info.get('initial_delay_minutes', 0)
@@ -305,6 +310,7 @@ def start_work(job, chia_location, log_directory, drives_free_space, backend):
         chia_location=chia_location,
         farmer_public_key=job.farmer_public_key,
         pool_public_key=job.pool_public_key,
+        pool_contract_address=job.pool_contract_address,
         size=job.size,
         memory_buffer=job.memory_buffer,
         temporary_directory=temporary_directory,

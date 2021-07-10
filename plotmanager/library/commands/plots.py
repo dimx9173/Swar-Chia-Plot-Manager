@@ -40,14 +40,14 @@ def _get_backend_flags(backend, *args, **kwargs):
 
 def _get_chia_flags(size, memory_buffer, temporary_directory, destination_directory, threads, buckets, bitfield,
                     temporary2_directory=None, farmer_public_key=None, pool_public_key=None,
-                    exclude_final_directory=False):
+                    exclude_final_directory=False, pool_contract_address=None):
     flags = dict(
         k=size,
         b=memory_buffer,
         t=temporary_directory,
         d=destination_directory,
         r=threads,
-        u=buckets,
+        u=buckets,       
     )
 
     if temporary2_directory is not None:
@@ -60,6 +60,8 @@ def _get_chia_flags(size, memory_buffer, temporary_directory, destination_direct
         flags['e'] = ''
     if exclude_final_directory:
         flags['x'] = ''
+    if pool_contract_address is not None:
+        flags['c'] = pool_contract_address
 
     return flags
 
